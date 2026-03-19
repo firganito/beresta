@@ -10,28 +10,27 @@ promo_codes = {
     'STAN': ' Баланс обнулён !'
 }
 
-# --- ФУНКЦИИ РАБОТЫ С БАЛАНСОМ ---
+
 def load_balance():
     if os.path.exists(balance_file):
         with open(balance_file, 'r') as f:
             return int(f.read().strip())
     return 0
 
-def save_balance(balance):  # <-- ИСПРАВЛЕНО: добавлен аргумент
+def save_balance(balance): 
     with open(balance_file, 'w') as f:
-        f.write(str(balance))  # <-- ИСПРАВЛЕНО: записываем переданный баланс
+        f.write(str(balance))  # 
 
-# Загружаем баланс при старте
 friend_balance = load_balance()
 
-# --- КЛАВИАТУРА ---
+
 def create_keyboard():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     markup.add('➕ 1 респект', '➕ 3 респекта', '➕ 5 респектов')
     markup.add('📊 Баланс', '🎁 Ввести промокод')
     return markup
 
-# --- КОМАНДЫ ---
+
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
     bot.send_message(message.chat.id,
@@ -41,7 +40,7 @@ def send_welcome(message):
                      f"© Beresta Wallet is made by BRATVA",
                      reply_markup=create_keyboard())
 
-# --- ОБРАБОТКА КНОПОК ---
+
 @bot.message_handler(func=lambda message: message.text in [
     '➕ 1 респект', '➕ 3 респекта', '➕ 5 респектов', '📊 Баланс'
 ])
@@ -62,13 +61,13 @@ def handle_buttons(message):
     elif message.text == '📊 Баланс':
         text = f"Текущий баланс респектов: {friend_balance}"
         bot.send_message(message.chat.id, text)
-        return  # Не сохраняем баланс, т.к. он не менялся
+        return  
 
-    # СОХРАНЯЕМ БАЛАНС ПОСЛЕ ИЗМЕНЕНИЯ!
+    
     save_balance(friend_balance)
 
 
-# --- ПРОМОКОДЫ ---
+
 @bot.message_handler(func=lambda message: message.text == '🎁 Ввести промокод')
 def ask_promo(message):
     msg = bot.send_message(message.chat.id, "Введите промокод:")
@@ -86,7 +85,7 @@ def process_promo(message):
     else:
         bot.send_message(message.chat.id, "❌ Неверный промокод.")
 
-# --- ЗАПУСК ---
+
 if __name__ == '__main__':
     print("Бот запущен...")
     bot.polling()
